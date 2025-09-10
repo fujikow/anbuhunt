@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Hunt da ANBU</title>
+    <title>Calculadora de Atributos</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
         :root {
-            --bg-color: #1a0000;
-            --container-bg: #2b0000;
-            --border-color: #5d0000;
-            --text-color: #fcebeb;
-            --accent-color: #e74c3c;
-            --dark-accent: #c0392b;
-            --disabled-bg: #4d1d1d;
-            --error-color: #ff0000;
+            --bg-color: #2c3e50;
+            --container-bg: #34495e;
+            --border-color: #7f8c8d;
+            --text-color: #ecf0f1;
+            --accent-color: #3498db;
+            --dark-accent: #2980b9;
+            --disabled-bg: #4a627a;
+            --error-color: #e74c3c;
             --success-color: #2ecc71;
-            --glow-color: #ff5252;
+            --glow-color: #5dade2;
         }
         
         body {
-            font-family: 'Cinzel', serif;
+            font-family: 'Roboto', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
@@ -76,7 +76,7 @@
             width: calc(100% - 20px);
             padding: 10px;
             border: 1px solid var(--border-color);
-            background-color: #3d0303;
+            background-color: #4a627a;
             color: var(--text-color);
             border-radius: 5px;
             font-size: 16px;
@@ -93,7 +93,7 @@
             border: 1px solid var(--border-color);
             padding: 10px;
             border-radius: 5px;
-            background-color: #330000;
+            background-color: #3f5870;
         }
         .attribute-item label {
             width: 100px;
@@ -102,7 +102,7 @@
         .attribute-item input {
             width: 60px;
             text-align: center;
-            font-family: 'Cinzel', serif;
+            font-family: 'Roboto', sans-serif;
         }
         .attribute-value {
             font-weight: bold;
@@ -133,42 +133,17 @@
             border-top: 2px solid var(--border-color);
             margin: 20px 0;
         }
-        .quest-options {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .quest-options label {
-            display: flex;
-            align-items: center;
-            font-weight: normal;
-            cursor: pointer;
-            margin: 5px;
-            transition: color 0.3s;
-        }
-        .quest-options label:hover {
-            color: var(--accent-color);
-        }
-        .quest-options input[type="radio"] {
-            margin-right: 5px;
-        }
         .quest-inputs-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
-            background-color: #330000;
+            background-color: #3f5870;
             padding: 15px;
             border-radius: 5px;
             border: 1px dashed var(--border-color);
         }
         .quest-inputs-grid input {
             width: 100%;
-        }
-        input:disabled {
-            background-color: var(--disabled-bg);
-            cursor: not-allowed;
-            color: #999;
         }
         .optimal-allocation {
             font-size: 0.8em;
@@ -185,15 +160,11 @@
             opacity: 0.6;
             width: 100%;
         }
-        /* Efeito de brilho */
+        
         .header-glow {
-            animation: pulse-glow 2s infinite ease-in-out;
+            text-shadow: 0 0 5px var(--dark-accent);
         }
-        @keyframes pulse-glow {
-            0% { text-shadow: 0 0 5px var(--dark-accent); }
-            50% { text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); }
-            100% { text-shadow: 0 0 5px var(--dark-accent); }
-        }
+
         /* Responsividade para telas menores */
         @media (max-width: 900px) {
             .main-container {
@@ -212,10 +183,10 @@
 
 <div class="main-container">
     <div class="calculator-section">
-        <h1 class="header-glow">Calculadora de Hunt da ANBU</h1>
+        <h1 class="header-glow">Calculadora de Atributos</h1>
 
         <div class="input-group">
-            <label for="nivel">Nível do Personagem:</label>
+            <label for="nivel">Nível do Personagem considerando bonus socket:</label>
             <input type="number" id="nivel" value="200" min="1" step="1">
         </div>
 
@@ -232,12 +203,6 @@
 
     <div class="quest-section">
         <h2>Valores de Item Quest</h2>
-        <div class="quest-options">
-            <label><input type="radio" name="quest-type" value="damage" checked> Quest de Damage</label>
-            <label><input type="radio" name="quest-type" value="wizardry"> Quest de Wizardry</label>
-            <label><input type="radio" name="quest-type" value="summoner"> Quest de Summoner</label>
-            <label><input type="radio" name="quest-type" value="custom"> Personalizada</label>
-        </div>
         <div id="quest-values-container" class="quest-inputs-grid">
             </div>
     </div>
@@ -249,7 +214,6 @@
 
 <script>
     const nivelInput = document.getElementById('nivel');
-    const questOptions = document.querySelectorAll('input[name="quest-type"]');
     const questValuesContainer = document.getElementById('quest-values-container');
     const attributesGrid = document.querySelector('.attributes-grid');
     const porcentagemTotalDisplay = document.getElementById('porcentagem-total');
@@ -264,14 +228,12 @@
         { id: 'critical', label: 'Critical', multiplier: 0.6, cap: null },
         { id: 'excellent', label: 'Excellent', multiplier: 0.6, cap: null }
     ];
-
-    const questsData = {
-        'damage': { damage: 21200, defense: 2100, hp: 9750, mana: 0, wizardry: 0, recovery: 0, critical: 3, excellent: 4 },
-        'wizardry': { damage: 0, defense: 2100, hp: 12950, mana: 0, wizardry: 13510, recovery: 0, critical: 3, excellent: 4 },
-        'summoner': { damage: 1800, defense: 15575, hp: 5000, mana: 0, wizardry: 3790, recovery: 0, critical: 3, excellent: 4 },
-        'custom': { damage: 0, defense: 0, hp: 0, mana: 0, wizardry: 0, recovery: 0, critical: 0, excellent: 0 }
-    };
     
+    // Objeto para armazenar os valores de quest personalizados
+    let questBonus = {
+        damage: 0, defense: 0, hp: 0, mana: 0, wizardry: 0, recovery: 0, critical: 0, excellent: 0
+    };
+
     function createAttributeInputs() {
         attributesGrid.innerHTML = '';
         atributosData.forEach(atributo => {
@@ -302,29 +264,12 @@
             questValuesContainer.appendChild(inputGroup);
         });
         document.querySelectorAll('.quest-input').forEach(input => {
-            input.addEventListener('input', () => {
-                const selectedQuestType = document.querySelector('input[name="quest-type"]:checked').value;
-                if (selectedQuestType === 'custom') {
-                    const atributoId = input.id.replace('quest-', '');
-                    questsData.custom[atributoId] = parseFloat(input.value) || 0;
-                    calcularAtributos();
-                }
+            input.addEventListener('input', (e) => {
+                const atributoId = e.target.id.replace('quest-', '');
+                questBonus[atributoId] = parseFloat(e.target.value) || 0;
+                calcularAtributos();
             });
         });
-    }
-
-    function updateQuestInputs() {
-        const selectedQuestType = document.querySelector('input[name="quest-type"]:checked').value;
-        const isCustom = selectedQuestType === 'custom';
-        const currentQuestValues = isCustom ? questsData['custom'] : questsData[selectedQuestType];
-
-        document.querySelectorAll('.quest-input').forEach(input => {
-            const atributoId = input.id.replace('quest-', '');
-            
-            input.value = currentQuestValues[atributoId];
-            input.disabled = !isCustom;
-        });
-        calcularAtributos();
     }
     
     function calcularAtributos() {
@@ -346,12 +291,6 @@
             totalDisplayContainer.classList.add('porcentagem-nok');
         }
         
-        const questBonus = {};
-        document.querySelectorAll('.quest-input').forEach(input => {
-            const atributoId = input.id.replace('quest-', '');
-            questBonus[atributoId] = parseFloat(input.value) || 0;
-        });
-
         atributosData.forEach(atributo => {
             const porcentagemInput = document.getElementById(`${atributo.id}-perc`);
             const porcentagem = parseFloat(porcentagemInput.value) || 0;
@@ -376,22 +315,19 @@
                     const pontosNivelNecessarios = pontosParaCap / atributo.multiplier;
                     let porcentagemIdeal = (pontosNivelNecessarios / nivel) * 100;
                     
-                    optimalSpan.innerText = `(Ótimo: ${porcentagemIdeal.toFixed(2)}%)`;
+                    optimalSpan.innerText = `(Full Status: ${porcentagemIdeal.toFixed(2)}%)`;
                 } else {
-                    optimalSpan.innerText = `(Ótimo: 0.00%)`;
+                    optimalSpan.innerText = `(Full Status: 0.00%)`;
                 }
             }
         });
     }
 
-    questOptions.forEach(radio => {
-        radio.addEventListener('change', updateQuestInputs);
-    });
     nivelInput.addEventListener('input', calcularAtributos);
     
     createAttributeInputs();
     createQuestInputs();
-    updateQuestInputs();
+    calcularAtributos();
 </script>
 
 </body>
